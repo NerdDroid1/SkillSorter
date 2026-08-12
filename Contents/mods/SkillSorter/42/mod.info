@@ -1,0 +1,5 @@
+name=Skill Sorter - Friendly Auto Sort
+id=SkillSorter
+description=Player-friendly container auto-sorting for Project Zomboid Build 42. Rename one container Input, then nearby containers Food, Clothes, Mech, Weld, Agri, Books, Med, Sew, Elec, Guns, Weps, Carp, Surv, or Misc. Supports forgiving names like [Sort:Food], sort:food, Food, and FOOD.
+poster=poster.png
+modversion=2
