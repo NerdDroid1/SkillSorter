@@ -2,9 +2,10 @@
 -- This file is load-order independent: if the main sorter has not loaded yet,
 -- a one-time bootstrap installs the guard on the first tick.
 
-local ERROR_LOG_INTERVAL_MS = 60000
-local lastErrorAt = nil
-local failuresSinceLog = 0
+local FAILURE_WINDOW_MS = 60 * 60 * 1000
+local FAILURE_THRESHOLD = 100
+local recentFailures = {}
+local lastAlertAt = nil
 
 local function timestampMs()
     if getTimestampMs then
@@ -15,18 +16,24 @@ local function timestampMs()
 end
 
 local function reportTickError(err)
-    failuresSinceLog = failuresSinceLog + 1
     local now = timestampMs()
-    if lastErrorAt and now - lastErrorAt < ERROR_LOG_INTERVAL_MS then return end
+    recentFailures[#recentFailures + 1] = now
 
-    -- Keep the useful reason, but do not emit a stack trace on every tick.
+    -- Only the most recent 101 timestamps are needed to detect the threshold.
+    if #recentFailures > FAILURE_THRESHOLD + 1 then
+        table.remove(recentFailures, 1)
+    end
+
+    -- Stay completely silent unless there are more than 100 failures in a
+    -- rolling 60-minute window. Even then, emit at most one line per hour.
+    if #recentFailures <= FAILURE_THRESHOLD then return end
+    if now - recentFailures[1] >= FAILURE_WINDOW_MS then return end
+    if lastAlertAt and now - lastAlertAt < FAILURE_WINDOW_MS then return end
+
     local message = tostring(err or "unknown error"):match("^[^\r\n]*") or "unknown error"
-    local count = failuresSinceLog
-    print("[SkillSorter] Scan skipped safely: " .. message
-        .. " (" .. tostring(count) .. " failure(s); retrying automatically)")
-
-    lastErrorAt = now
-    failuresSinceLog = 0
+    print("[SkillSorter] Repeated scan failures: " .. message
+        .. " (more than 100 failures in 60 minutes; continuing to retry quietly)")
+    lastAlertAt = now
 end
 
 local function installErrorHandler()
