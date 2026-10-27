@@ -25,6 +25,7 @@ Example:
 - Project Zomboid Build 42 layout included
 - Mod ID: `SkillSorter`
 - Lua entry file: `42/media/lua/server/SkillSorterServer.lua`
+- Error handler: `42/media/lua/server/SkillSorterServerErrorHandler.lua`
 
 ## Container naming
 
@@ -154,9 +155,10 @@ SkillSorterWorkshop/
           lua/
             server/
               SkillSorterServer.lua
+              SkillSorterServerErrorHandler.lua
 ```
 
-The root `SkillSorterServer.lua` is included only for easy review. The Build 42 runtime file is under `42/media/lua/server/`.
+The root `SkillSorterServer.lua` is included only for easy review. The Build 42 runtime files are under `42/media/lua/server/`.
 
 ## Known limitations
 
@@ -167,6 +169,12 @@ The root `SkillSorterServer.lua` is included only for easy review. The Build 42 
 - It is intentionally simple and server-friendly; it does not include a client UI.
 
 ## Troubleshooting
+
+### Error handling and alerts
+
+Routine scan failures are handled silently and retried automatically. No error lines are emitted for the first 100 failures in a rolling 60-minute window.
+
+If more than 100 failures occur within that window, the server emits one concise warning line. Further failures remain quiet, and repeat warnings are limited to one per hour. This does not change sorting rules or require a restart.
 
 ### Nothing is moving
 
