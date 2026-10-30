@@ -5,6 +5,6 @@ description=Player friendly auto-sorting for Project Zomboid. Name one crate Inp
 description=
 description=[h2]Support the mod[/h2]
 description=If you enjoy this mod, donations are welcome and appreciated.
-description=[url=https://paypal.me/nerddroid][img]https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif[/img][/url]
-tags=Build 42;
+tags=Build 42;MP,SP
 visibility=public
+description=[url=https://paypal.me/nerddroid][img]https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif[/img][/url]
